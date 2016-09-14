@@ -71,7 +71,7 @@ var readInlineQuery = function(query) {
         console.error('Error: links not found in response.');
         return;
       } else {
-        api.answerInlineQuery({ inline_query_id: query.id, results: results }, function (err, message) {
+        api.answerInlineQuery({ inline_query_id: query.id, results: JSON.stringify(results) }, function (err, message) {
           if (err) {
             console.log(err);
           }
