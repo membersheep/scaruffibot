@@ -1,6 +1,7 @@
 /*jshint esversion: 6 */
 
 var config = require('./config');
+var quotes = require('./quotes');
 var express = require('express');
 var bodyParser = require('body-parser');
 var TelegramBot = require('telegrambot');
@@ -47,40 +48,59 @@ var server = app.listen(config.SERVER_PORT, function () {
 var readInlineQuery = function(query) {
   console.log('Reading query: '+query.query);
   if (query.query.length > 0) {
-    Google(query.query + ' site:scaruffi.com', function (err, res) {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      if (!res.links) {
-        console.error('Error: links not found in response.');
-        return;
-      }
-      var answerMessage = 'Here you are: ' ;
-      var results = res.links.map((link, index) => {
-        return {
-          'type': 'article',
-          'id': 'id'+index,
-          'title': link.title,
-          'input_message_content': {
-            'message_text': answerMessage + link.href
-          },
-          'url': link.href,
-          'description': link.description,
-          'hide_url': false
-        };
+    if(query.query === 'quote') {
+      var randomIndex = Math.floor(Math.random()*quotes.length);
+      var randomQuote = quotes[randomIndex];
+      var result = {
+        'type': 'article',
+        'id': 'quote'+randomIndex,
+        'title': 'Quote',
+        'input_message_content': {
+          'message_text': randomQuote
+        },
+        'description': randomQuote,
+      };
+      api.answerInlineQuery({ inline_query_id: query.id, results: JSON.stringify([result]) }, function (err, message) {
+        if (err) {
+          console.log(err);
+        }
       });
-      if (!results) {
-        console.error('Error: links not found in response.');
-        return;
-      } else {
-        api.answerInlineQuery({ inline_query_id: query.id, results: JSON.stringify(results) }, function (err, message) {
-          if (err) {
-            console.log(err);
-          }
+    } else {
+      Google(query.query + ' site:scaruffi.com', function (err, res) {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        if (!res.links) {
+          console.error('Error: links not found in response.');
+          return;
+        }
+        var answerMessage = 'Here you are: ' ;
+        var results = res.links.map((link, index) => {
+          return {
+            'type': 'article',
+            'id': 'id'+index,
+            'title': link.title,
+            'input_message_content': {
+              'message_text': answerMessage + link.href
+            },
+            'url': link.href,
+            'description': link.description,
+            'hide_url': false
+          };
         });
-      }
-    });
+        if (!results) {
+          console.error('Error: links not found in response.');
+          return;
+        } else {
+          api.answerInlineQuery({ inline_query_id: query.id, results: JSON.stringify(results) }, function (err, message) {
+            if (err) {
+              console.log(err);
+            }
+          });
+        }
+      });
+    }
   }
   console.log('Query read.');
 };
@@ -141,7 +161,7 @@ var readCommand = function(message) {
           });
         }
       } else if (message.text.startsWith('/quote')) {
-        var randomQuote = 'Asking the wrong questions is more important than providing the right answers';
+        var randomQuote = quotes[Math.floor(Math.random()*quotes.length)];
         api.sendMessage({ chat_id: message.chat.id, text: randomQuote }, function (err, message) {
           if (err) {
             console.error(err);
