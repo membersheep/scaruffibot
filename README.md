@@ -10,6 +10,4 @@ You can deploy your own bot to heroku by following these steps:
 3. Create a new bot account with [BotFather](https://telegram.me/BotFather).
 4. Go to your heroku app settings page and create the following config variables:
   - TELEGRAM_TOKEN: the token you received from the BotFather.
-  - TELEGRAM_CHAT_ID: the id of the chat where you want the messages to be posted.
   - WEBHOOK_BASE_URL: your heroku app url *https://your-heroku-app-name.herokuapp.com*
-  - WEBHOOK_PATH: a custom path for the webhook (defaults to */telegramBot*)
