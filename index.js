@@ -62,7 +62,7 @@ var readInlineQuery = function(query) {
           'id': 'id'+index,
           'title': link.title,
           'input_message_content': {
-            'message_text': link.description
+            'message_text': 'Asking the wrong questions is more important than providing the right answers'
           },
           'url': link.href,
         };
