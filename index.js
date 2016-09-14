@@ -32,7 +32,7 @@ app.post(config.WEBHOOK_PATH, function(req, res) {
   if (body.hasOwnProperty('message')) {
     readCommand(body.message);
   } else if (body.hasOwnProperty('inline_query')) {
-    bot.readInlineQuery(body.inline_query);
+    readInlineQuery(body.inline_query);
   }
   res.send();
 });
