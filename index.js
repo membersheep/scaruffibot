@@ -45,7 +45,7 @@ var server = app.listen(config.SERVER_PORT, function () {
 });
 
 var readInlineQuery = function(query) {
-  console.log('Reading query...');
+  console.log('Reading query: '+query.query);
   if (query.query.length > 0) {
     Google(query.query + ' site:scaruffi.com', function (err, res) {
       if (err) {
