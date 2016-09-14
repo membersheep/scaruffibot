@@ -57,14 +57,14 @@ var readInlineQuery = function(query) {
         return;
       }
       var randomQuote = 'Asking the wrong questions is more important than providing the right answers';
-      var answerMessage = randomQuote + '\n' + link.href;
+      var answerMessage = randomQuote + '\n';
       var results = res.links.map((link, index) => {
         return {
           'type': 'article',
           'id': 'id'+index,
           'title': link.title,
           'input_message_content': {
-            'message_text': answerMessage
+            'message_text': answerMessage + link.href
           },
           'url': link.href,
           'description': randomQuote,
