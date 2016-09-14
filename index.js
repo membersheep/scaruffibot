@@ -56,13 +56,18 @@ var readInlineQuery = function(query) {
         console.error('Error: links not found in response.');
         return;
       }
+      var randomQuote = 'Asking the wrong questions is more important than providing the right answers';
+      var answerMessage = randomQuote + '\n' + link.href;
       var results = res.links.map((link, index) => {
         return {
           'type': 'article',
           'id': 'id'+index,
           'title': link.title,
+          'input_message_content': {
+            'message_text': answerMessage
+          },
           'url': link.href,
-          'description': 'Asking the wrong questions is more important than providing the right answers',
+          'description': randomQuote,
           'hide_url': false
         };
       });
