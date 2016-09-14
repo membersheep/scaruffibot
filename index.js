@@ -67,22 +67,23 @@ var readCommand = function(message) {
             console.error(err);
             // TODO: SEND ERROR MESSGE
           }
-          var link = res.link[0];
-          console.log(link);
-          if (!link) {
-            api.sendMessage({ chat_id: message.chat.id, text: config.ERROR_MESSAGE_EMPTY_RESP }, function (err, message) {
-              if (err) {
-                console.log(err);
-              }
-            });
-            return;
-          } else {
-            api.sendMessage({ chat_id: message.chat.id, text: link }, function (err, message) {
-              if (err) {
-                console.log(err);
-              }
-            });
-          }
+          console.log(res);
+          // var link = res.link[0];
+          // console.log(link);
+          // if (!link) {
+          //   api.sendMessage({ chat_id: message.chat.id, text: config.ERROR_MESSAGE_EMPTY_RESP }, function (err, message) {
+          //     if (err) {
+          //       console.log(err);
+          //     }
+          //   });
+          //   return;
+          // } else {
+          //   api.sendMessage({ chat_id: message.chat.id, text: link }, function (err, message) {
+          //     if (err) {
+          //       console.log(err);
+          //     }
+          //   });
+          // }
         });
       }
     } else {
