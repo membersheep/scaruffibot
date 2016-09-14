@@ -65,6 +65,7 @@ var readInlineQuery = function(query) {
             'message_text': 'Asking the wrong questions is more important than providing the right answers'
           },
           'url': link.href,
+          'hide_url': false
         };
       });
       if (!results) {
