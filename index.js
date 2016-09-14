@@ -5,6 +5,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var TelegramBot = require('telegrambot');
 var Google = require('google');
+Google.resultsPerPage = 5;
 
 // TELEGRAM SETUP
 var api = new TelegramBot(config.TELEGRAM_TOKEN);
@@ -30,6 +31,8 @@ app.post(config.WEBHOOK_PATH, function(req, res) {
   var body = req.body;
   if (body.hasOwnProperty('message')) {
     readCommand(body.message);
+  } else if (body.hasOwnProperty('inline_query')) {
+    bot.readInlineQuery(body.inline_query);
   }
   res.send();
 });
@@ -41,12 +44,42 @@ var server = app.listen(config.SERVER_PORT, function () {
   console.log('Server listening at http://%s:%s', host, port);
 });
 
-var sendError = function(errorMessage, chatId) {
-  api.sendMessage({ chat_id: chatId, text: errorMessage }, function (err, message) {
-    if (err) {
-      console.log(err);
-    }
-  });
+var readInlineQuery = function(query) {
+  console.log('Reading query...');
+  if (query.query.length > 0) {
+    Google(query.query + ' site:scaruffi.com', function (err, res) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      if (!res.links) {
+        console.error('Error: links not found in response.');
+        return;
+      }
+      var results = res.links.map((link, index) => {
+        return {
+          'type': 'article',
+          'id': 'id'+index,
+          'title': link.title,
+          'input_message_content': {
+            'message_text': link.description
+          },
+          'url': link.href,
+        };
+      });
+      if (!results) {
+        console.error('Error: links not found in response.');
+        return;
+      } else {
+        api.answerInlineQuery({ inline_query_id: query.id, results: results }, function (err, message) {
+          if (err) {
+            console.log(err);
+          }
+        });
+      }
+    });
+  }
+  console.log('Query read.');
 };
 
 var readCommand = function(message) {
@@ -56,7 +89,7 @@ var readCommand = function(message) {
       if (message.text === '/start') {
         api.sendMessage({ chat_id: message.chat.id, text: config.START_MESSAGE }, function (err, message) {
           if (err) {
-            console.log(err);
+            console.error(err);
           }
         });
       } else if (message.text.startsWith('/search')) {
@@ -67,7 +100,7 @@ var readCommand = function(message) {
               console.error(err);
               api.sendMessage({ chat_id: message.chat.id, text: config.ERROR_MESSAGE_EMPTY_RESP }, function (err, message) {
                 if (err) {
-                  console.log(err);
+                  console.error(err);
                 }
               });
               return;
@@ -76,24 +109,23 @@ var readCommand = function(message) {
               console.error('Error: links not found in response.');
               api.sendMessage({ chat_id: message.chat.id, text: config.ERROR_MESSAGE_EMPTY_RESP }, function (err, message) {
                 if (err) {
-                  console.log(err);
+                  console.error(err);
                 }
               });
               return;
             }
             var link = res.links[0];
-            console.log(link);
             if (!link || !link.href) {
               api.sendMessage({ chat_id: message.chat.id, text: config.ERROR_MESSAGE_EMPTY_RESP }, function (err, message) {
                 if (err) {
-                  console.log(err);
+                  console.error(err);
                 }
               });
               return;
             } else {
               api.sendMessage({ chat_id: message.chat.id, text: link.href }, function (err, message) {
                 if (err) {
-                  console.log(err);
+                  console.error(err);
                 }
               });
             }
@@ -101,16 +133,16 @@ var readCommand = function(message) {
         } else {
           api.sendMessage({ chat_id: message.chat.id, text: config.ERROR_MESSAGE_EMPTY_QUERY }, function (err, message) {
             if (err) {
-              console.log(err);
+              console.error(err);
             }
           });
         }
       }
     } else {
-      console.log('Message text missing');
+      console.error('Message text missing');
     }
   } else {
-    console.log('Message missing');
+    console.error('Message missing');
   }
   console.log('Command processed.');
 };
