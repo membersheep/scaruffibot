@@ -1,4 +1,6 @@
 # scaruffibot
+![Heroku](https://heroku-badge.herokuapp.com/?app=scaruffi-bot&root=status&style=flat)
+![Dependencies](https://david-dm.org/membersheep/scaruffibot.svg)
 Telegram bot to search scaruffi.com.
 ## Usage
 Add the bot by following this link [ScaruffiBot](http://telegram.me/scaruffibot) .
