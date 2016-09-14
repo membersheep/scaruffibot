@@ -60,7 +60,7 @@ var readInlineQuery = function(query) {
         },
         'description': randomQuote,
       };
-      api.answerInlineQuery({ inline_query_id: query.id, results: JSON.stringify([result]) }, function (err, message) {
+      api.answerInlineQuery({ inline_query_id: query.id, results: JSON.stringify([result]), cache_time: 1 }, function (err, message) {
         if (err) {
           console.log(err);
         }
