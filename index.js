@@ -81,10 +81,9 @@ var readCommand = function(message) {
               });
               return;
             }
-            console.log(res.links);
             var link = res.links[0];
             console.log(link);
-            if (!link) {
+            if (!link || !link.href) {
               api.sendMessage({ chat_id: message.chat.id, text: config.ERROR_MESSAGE_EMPTY_RESP }, function (err, message) {
                 if (err) {
                   console.log(err);
@@ -92,7 +91,7 @@ var readCommand = function(message) {
               });
               return;
             } else {
-              api.sendMessage({ chat_id: message.chat.id, text: link }, function (err, message) {
+              api.sendMessage({ chat_id: message.chat.id, text: link.href }, function (err, message) {
                 if (err) {
                   console.log(err);
                 }
