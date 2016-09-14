@@ -41,6 +41,14 @@ var server = app.listen(config.SERVER_PORT, function () {
   console.log('Server listening at http://%s:%s', host, port);
 });
 
+var sendError = function(errorMessage, chatId) {
+  api.sendMessage({ chat_id: chatId, text: errorMessage }, function (err, message) {
+    if (err) {
+      console.log(err);
+    }
+  });
+};
+
 var readCommand = function(message) {
   console.log('Reading command...');
   if (message) {
@@ -54,37 +62,50 @@ var readCommand = function(message) {
       } else if (message.text.startsWith('/search')) {
         var query = message.text.replace('/search', '');
         if (query.length > 0) {
-
+          Google(query + ' site:scaruffi.com', function (err, res) {
+            if (err) {
+              console.error(err);
+              api.sendMessage({ chat_id: message.chat.id, text: config.ERROR_MESSAGE_EMPTY_RESP }, function (err, message) {
+                if (err) {
+                  console.log(err);
+                }
+              });
+              return;
+            }
+            if (!res.links) {
+              console.error('Error: links not found in response.');
+              api.sendMessage({ chat_id: message.chat.id, text: config.ERROR_MESSAGE_EMPTY_RESP }, function (err, message) {
+                if (err) {
+                  console.log(err);
+                }
+              });
+              return;
+            }
+            console.log(res.links);
+            var link = res.links[0];
+            console.log(link);
+            if (!link) {
+              api.sendMessage({ chat_id: message.chat.id, text: config.ERROR_MESSAGE_EMPTY_RESP }, function (err, message) {
+                if (err) {
+                  console.log(err);
+                }
+              });
+              return;
+            } else {
+              api.sendMessage({ chat_id: message.chat.id, text: link }, function (err, message) {
+                if (err) {
+                  console.log(err);
+                }
+              });
+            }
+          });
         } else {
-          api.sendMessage({ chat_id: message.chat.id, text: config.ERROR_MESSAGE_EMPTY }, function (err, message) {
+          api.sendMessage({ chat_id: message.chat.id, text: config.ERROR_MESSAGE_EMPTY_QUERY }, function (err, message) {
             if (err) {
               console.log(err);
             }
           });
         }
-        Google(query + ' site:scaruffi.com', function (err, res){
-          if (err) {
-            console.error(err);
-            // TODO: SEND ERROR MESSGE
-          }
-          console.log(res);
-          // var link = res.link[0];
-          // console.log(link);
-          // if (!link) {
-          //   api.sendMessage({ chat_id: message.chat.id, text: config.ERROR_MESSAGE_EMPTY_RESP }, function (err, message) {
-          //     if (err) {
-          //       console.log(err);
-          //     }
-          //   });
-          //   return;
-          // } else {
-          //   api.sendMessage({ chat_id: message.chat.id, text: link }, function (err, message) {
-          //     if (err) {
-          //       console.log(err);
-          //     }
-          //   });
-          // }
-        });
       }
     } else {
       console.log('Message text missing');
