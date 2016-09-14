@@ -112,4 +112,5 @@ var readCommand = function(message) {
   } else {
     console.log('Message missing');
   }
+  console.log('Command processed.');
 };
