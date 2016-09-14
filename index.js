@@ -56,8 +56,7 @@ var readInlineQuery = function(query) {
         console.error('Error: links not found in response.');
         return;
       }
-      var randomQuote = 'Asking the wrong questions is more important than providing the right answers';
-      var answerMessage = randomQuote + '\n';
+      var answerMessage = 'Here you are: ' ;
       var results = res.links.map((link, index) => {
         return {
           'type': 'article',
@@ -67,7 +66,7 @@ var readInlineQuery = function(query) {
             'message_text': answerMessage + link.href
           },
           'url': link.href,
-          'description': randomQuote,
+          'description': link.description,
           'hide_url': false
         };
       });
@@ -141,6 +140,13 @@ var readCommand = function(message) {
             }
           });
         }
+      } else if (message.text.startsWith('/quote')) {
+        var randomQuote = 'Asking the wrong questions is more important than providing the right answers';
+        api.sendMessage({ chat_id: message.chat.id, text: randomQuote }, function (err, message) {
+          if (err) {
+            console.error(err);
+          }
+        });
       }
     } else {
       console.error('Message text missing');
