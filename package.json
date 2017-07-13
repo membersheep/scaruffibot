@@ -1,6 +1,9 @@
 {
   "name": "scaruffi-bot",
   "version": "1.0.0",
+  "engines": {
+    "node": "4.8.4"
+  },
   "description": "Telegram bot to search scaruffi.com",
   "main": "index.js",
   "scripts": {
